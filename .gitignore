@@ -1,4 +1,4 @@
-.directory
+.directory 
 build_Unix/CMakeFiles/security.dir/progress.make
 .vs/ProjectSettings.json
 .vs/VSWorkspaceState.json
@@ -154,3 +154,4 @@ build_Unix/CMakeTools/CMakeToolsHelpers.cmake
 build_Unix/CMakeTools/InitializeCache.cmake
 include/.vs/slnx.sqlite
 include/.vs/VSWorkspaceState.json
+.gitignore
