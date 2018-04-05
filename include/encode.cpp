@@ -3,10 +3,7 @@
 
 encode::encode(std::string s)
 {
-<<<<<<< HEAD
-=======
 	
->>>>>>> origin/master
 	std::string str = s;
 	std::vector<std::vector<int>> CharFreqProb = calculateFreq(s);
 	for (int i = 0; i < CharFreqProb.size(); i++) {
