@@ -11,7 +11,7 @@ class encode
 public:
 	encode(std::string s);
 
-	std::vector<std::string> getChar();
+	std::vector<int> getChar();
 	std::vector<int> getFreq();
 	std::vector<int> getProb();
 	std::vector<std::string> getHuff();

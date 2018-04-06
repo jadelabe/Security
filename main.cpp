@@ -9,10 +9,10 @@ int main(int argc, char* argv[])
 	encode p1 = encode(s);
 
 	//Print Chars
-	std::vector<std::string> Char = p1.getChar();
+	std::vector<int> Char = p1.getChar();
 	std::cout << "Ordered Chars:" << std::endl;
 	for (int i = 0; i < Char.size(); i++) {
-		std::cout << Char[i].length() << ' ';
+		std::cout << (char) Char[i] << ' ';
 	}
 	std::cout << std::endl;
 

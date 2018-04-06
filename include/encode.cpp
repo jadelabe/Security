@@ -59,9 +59,9 @@ encode::encode(std::string s)
 	*/
 }
 
-std::vector<std::string> encode::getChar()
+std::vector<int> encode::getChar()
 {
-	return huff;
+	return Char;
 }
 std::vector<int> encode::getFreq()
 {
