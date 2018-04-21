@@ -156,3 +156,8 @@ build_Unix/CMakeTools/InitializeCache.cmake
 include/.vs/slnx.sqlite
 include/.vs/VSWorkspaceState.json
 .gitignore
+/.vs/Security/v15/ipch/AutoPCH/933eaae5972fff42/CORRECTION.ipch
+/.vs/Security/v15/ipch/AutoPCH/fef09e4b181555ff/MAIN.ipch
+/.vs/Security/v15/.suo
+/.vs/Security/v15/Browse.VC.opendb
+/.vs/Security/v15/Browse.VC.db

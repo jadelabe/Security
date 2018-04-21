@@ -86,7 +86,7 @@ int correction::calculateHamming()
 	int distance = 99;
 	int foo = 0;
 	bool fooChanged = false;
-
+	//Need to create all the words and then count the number of one, take the lesser of those as hamming
 	for (int i = 0; i < genMatrix.size(); i++) {
 		for (int j = 0; j < genMatrix.size(); j++) {
 			for (int t = 0; t < genMatrix[i].size(); t++) {
