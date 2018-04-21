@@ -19,6 +19,28 @@ correction::correction(std::vector<int> numbers, int w, int h, int base)
 	hamming = calculateHamming();
 }
 
+correction::correction(std::vector<int> numbers, int w, int h, int base, std::vector<int> msg, std::vector<char> alphabet)
+{
+	matrix.clear();
+	std::vector<int> vector;
+	for (int i = 0; i < h; i++) {
+		for (int i = 0; i < w; i++) {
+			vector.push_back(numbers.front());
+			numbers.erase(numbers.begin());
+		}
+		matrix.push_back(vector);
+		vector.clear();
+	}
+	cardinal = calculateCardinal(base, h);
+	fillIdentityMatrix();
+	fillGenMatrix();
+	hamming = calculateHamming();
+	
+	codedMsg = msg;
+	sourceSeg = calculateSourceSeg(alphabet.size(), base);
+
+}
+
 std::vector<std::vector<int>> correction::getMatrix()
 {
 	return matrix;
@@ -42,6 +64,16 @@ int correction::getHamming()
 int correction::getCardinal()
 {
 	return cardinal;
+}
+
+int correction::getLinealSeg()
+{
+	return linealSeg;
+}
+
+int correction::getSourceSeg()
+{
+	return sourceSeg;
 }
 
 int correction::calculateCardinal(int base, int h)
@@ -102,3 +134,21 @@ void correction::fillGenMatrix()
 	}
 }
 
+std::vector<int> correction::linealDeco(int h)
+{
+	std::vector<int> vector;
+	for (int i = 0; i < codedMsg.size(); i+=genMatrix[0].size()) {
+		for (int j = 0; j < h; i++) {
+			vector.push_back(codedMsg[i+j]);
+		}
+	}
+	return vector;
+}
+std::vector<int> correction::sourceDeco()
+{
+
+}
+int correction::calculateSourceSeg(int alphabetSize, int base)
+{
+	return ceil(log(alphabetSize) / log(base));
+}
