@@ -139,14 +139,15 @@ std::vector<int> correction::linealDeco(int h)
 	std::vector<int> vector;
 	for (int i = 0; i < codedMsg.size(); i+=genMatrix[0].size()) {
 		for (int j = 0; j < h; i++) {
-			vector.push_back(codedMsg[i+j]);
+			vector.push_back(codedMsg.at(i+j));
 		}
 	}
 	return vector;
 }
 std::vector<int> correction::sourceDeco()
 {
-
+	std::vector<int> vector;
+	return vector;
 }
 int correction::calculateSourceSeg(int alphabetSize, int base)
 {

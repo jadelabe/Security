@@ -20,9 +20,9 @@ private:
 	std::vector<std::vector<int>> matrix;
 	std::vector<std::vector<int>> identityMatrix;
 	std::vector<std::vector<int>> genMatrix;
-	std::vector<std::vector<int>> codedMsg;
-	std::vector<std::vector<int>> linealCodedMsg;
-	std::vector<std::vector<int>> originalMsg;
+	std::vector<int> codedMsg;
+	std::vector<int> linealCodedMsg;
+	std::vector<int> originalMsg;
 	int hamming;
 	int cardinal;
 	int linealSeg;
