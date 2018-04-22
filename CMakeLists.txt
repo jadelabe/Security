@@ -9,5 +9,5 @@ set (CMAKE_BUILD_TYPE Debug)
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
-add_executable(security main.cpp include/encode.h include/encode.cpp include/correction.cpp include/correction.h)
+add_executable(security main.cpp include/encode.h include/encode.cpp include/decode.cpp include/decode.h)
 

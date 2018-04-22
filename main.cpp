@@ -1,5 +1,5 @@
 #include <encode.h>
-#include <correction.h>
+#include <decode.h>
 #include <iostream>
 
 int main(int argc, char* argv[])
@@ -51,11 +51,12 @@ int main(int argc, char* argv[])
 	*/	
 
 	//Practica 2
-	//std::vector<int> numbers = { 0, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2}; //w4 h3
-	//correction c = correction(numbers, 4, 3, 3);
 	/*
+	std::vector<int> numbers = { 0, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2}; //w4 h3
+	decode c = decode(numbers, 4, 3, 3);
+	
 	std::vector<int> numbers = { 1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,1,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,1,0,1,0,1,0,1,1,0,1,1,1,0,0,1,1,0,1,1,0,1,1,1,0,0,0,1,0,1,1,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0 }; //w12 h12
-	correction c = correction(numbers, 12, 12, 2);
+	decode c = decode(numbers, 12, 12, 2);
 	std::vector<std::vector<int>> matrix = c.getMatrix();
 	int hamming = c.getHamming();
 	int cardinal = c.getCardinal();
@@ -70,8 +71,9 @@ int main(int argc, char* argv[])
 	std::string str = "abcde ABCDEfghijklmnFGHIJKLMNopqrstuvwxyzOPQRSTUVWXYZ.,;¿?¡!";
 	std::vector<char> alphabet;
 	std::copy(str.c_str(), str.c_str()+str.length(), back_inserter(alphabet));
-	correction decode = correction(A, 3, 4, 2, msg, alphabet);
-	int sourceSeg = decode.getSourceSeg();
+
+	decode deco = decode(A, 3, 4, 2, msg, alphabet);
+	int sourceSeg = deco.getSourceSeg();
 
 	std::cout << "Source Segment Size:";
 	std::cout << sourceSeg << std::endl;
