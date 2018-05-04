@@ -16,24 +16,33 @@ public:
 	int getCardinal();
 	int getLinealSeg();
 	int getSourceSeg();
+
+
 private:
 	std::vector<std::vector<int>> matrix;
 	std::vector<std::vector<int>> identityMatrix;
 	std::vector<std::vector<int>> genMatrix;
+	std::vector<std::vector<int>> words;
+	std::vector<std::vector<int>> basicWords;
 	std::vector<int> codedMsg;
 	std::vector<int> linealCodedMsg;
-	std::vector<int> originalMsg;
+	std::vector<std::vector<int>> decoMsg;
+	std::vector<char> originalMsg;
 	int hamming;
 	int cardinal;
 	int linealSeg;
 	int sourceSeg;
+	int numberOfWords;
 
 	int calculateCardinal(int base, int h);
 	int calculateHamming();
 	void fillIdentityMatrix();
 	void fillGenMatrix();
+	void generateWords(int base);
+	void generateBasicWords(int length, int base);
+	void appendNumber(int pos, int number, int base);
 	
 	std::vector<int> linealDeco(int h);
-	std::vector<int> sourceDeco();
+	std::vector<std::vector<int>> sourceDeco();
 	int calculateSourceSeg(int alphabetSize, int base);
 };

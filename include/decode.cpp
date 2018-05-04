@@ -16,7 +16,10 @@ decode::decode(std::vector<int> numbers, int w, int h, int base)
 	cardinal = calculateCardinal(base, h);
 	fillIdentityMatrix();
 	fillGenMatrix();
-	hamming = calculateHamming();
+	generateBasicWords(h, base);
+	generateWords(base);
+
+	//hamming = calculateHamming();
 }
 
 decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int> msg, std::vector<char> alphabet)
@@ -34,10 +37,24 @@ decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int
 	cardinal = calculateCardinal(base, h);
 	fillIdentityMatrix();
 	fillGenMatrix();
-	hamming = calculateHamming();
+
 	
 	codedMsg = msg;
 	sourceSeg = calculateSourceSeg(alphabet.size(), base);
+	//generateBasicWords(h, base);
+	//generateWords(base);
+	hamming = calculateHamming();
+
+	linealCodedMsg = linealDeco(h);
+	decoMsg = sourceDeco();
+	generateBasicWords(sourceSeg, base);
+	for (int i = 0; i < decoMsg.size(); i++) {
+		for (int j = 0; j < alphabet.size(); j++) {
+			if (decoMsg[i] == basicWords[j]) {
+				originalMsg.push_back(alphabet[j]);
+			}
+		}
+	}
 
 }
 
@@ -78,11 +95,12 @@ int decode::getSourceSeg()
 
 int decode::calculateCardinal(int base, int h)
 {
-	return pow(base, h);
+	return (int) pow(base, h);
 }
 
 int decode::calculateHamming()
 {
+	/* Faster but not 100% precise
 	int distance = 99;
 	int foo = 0;
 	bool fooChanged = false;
@@ -102,8 +120,27 @@ int decode::calculateHamming()
 			fooChanged = false;
 		}
 	}
+	return distance;
+	*/
 
-
+	int distance = 99;
+	int foo = 0;
+	bool fooChanged = false;
+	for (int i = 0; i < words.size(); i++) {
+		for (int j = 0; j < words.size(); j++) {
+			for (int t = 0; t < words[i].size(); t++) {
+				foo += abs(words[i][t] - words[j][t]);
+				if (foo > 0) {
+					fooChanged = true;
+				}
+			}
+			if (foo < distance && fooChanged) {
+				distance = foo;
+			}
+			foo = 0;
+			fooChanged = false;
+		}
+	}
 	return distance;
 }
 
@@ -134,20 +171,83 @@ void decode::fillGenMatrix()
 	}
 }
 
+void decode::generateWords(int base)
+{
+	words.resize(numberOfWords);
+	int x, y;
+	for (int i = 0; i < numberOfWords; i++) {
+		for (int t = 0; t < genMatrix[0].size(); t++)  {
+			x = 0;
+			for (int j = 0; j < genMatrix.size(); j++) {
+				x += (basicWords[i][j] * genMatrix[j][t]) % base;
+			}
+			words[i].push_back(x % base);
+		}
+	}
+}
+
+void decode::generateBasicWords(int length, int base)
+{
+	numberOfWords = pow(base, length);
+	basicWords.resize(numberOfWords);
+	for (int i = 0; i < numberOfWords; i++) {
+		appendNumber(i, i, base);
+	}
+	for (int i = 0; i < numberOfWords; i++) {
+		if (basicWords[i].size() < length) {
+			for (int j = basicWords[i].size(); j < length; j++) {
+				basicWords[i].insert(basicWords[i].begin(), 0);
+			}
+		}
+	}
+}
+
+void decode::appendNumber(int pos, int number, int base)
+{
+	if (number == 0){
+		return;
+	}
+	int x = number % base;
+	number /= base;
+	if (x < 0){
+		number += 1;
+	}
+	appendNumber(pos, number, base);
+
+	if (x < 0) {
+		basicWords[pos].push_back(x + (base * -1));
+	}
+	else {
+		basicWords[pos].push_back(x);
+	}
+
+	return;
+}
+
 std::vector<int> decode::linealDeco(int h)
 {
 	std::vector<int> vector;
-	for (int i = 0; i < codedMsg.size(); i+=genMatrix[0].size()) {
+	for (int i = 0; i < codedMsg.size()-h; i+=genMatrix[0].size()-h) {
 		for (int j = 0; j < h; i++) {
-			vector.push_back(codedMsg.at(i+j));
+			vector.push_back(codedMsg.at(i));
+			j++;
 		}
 	}
 	return vector;
 }
-std::vector<int> decode::sourceDeco()
+std::vector<std::vector<int>> decode::sourceDeco()
 {
+	std::vector<std::vector<int>> decodedMsg;
 	std::vector<int> vector;
-	return vector;
+	for (int i = 0; i < linealCodedMsg.size() - sourceSeg; ) {
+		for (int j = 0; j < sourceSeg; i++) {
+			vector.push_back(linealCodedMsg.at(i));
+			j++;
+		}
+		decodedMsg.push_back(vector);
+		vector.clear();
+	}
+	return decodedMsg;
 }
 int decode::calculateSourceSeg(int alphabetSize, int base)
 {
