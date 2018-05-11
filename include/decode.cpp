@@ -19,7 +19,7 @@ decode::decode(std::vector<int> numbers, int w, int h, int base)
 	generateBasicWords(h, base);
 	generateWords(base);
 
-	//hamming = calculateHamming();
+	hamming = calculateHamming();
 }
 
 decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int> msg, std::vector<char> alphabet)
@@ -41,13 +41,17 @@ decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int
 	
 	codedMsg = msg;
 	sourceSeg = calculateSourceSeg(alphabet.size(), base);
-	//generateBasicWords(h, base);
-	//generateWords(base);
+
+
+	generateBasicWords(sourceSeg, base);
+	generateWords(base);
 	hamming = calculateHamming();
+	
+	parityCheck(h, base);
 
 	linealCodedMsg = linealDeco(h);
 	decoMsg = sourceDeco();
-	generateBasicWords(sourceSeg, base);
+
 	for (int i = 0; i < decoMsg.size(); i++) {
 		for (int j = 0; j < alphabet.size(); j++) {
 			if (decoMsg[i] == basicWords[j]) {
@@ -55,6 +59,7 @@ decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int
 			}
 		}
 	}
+
 
 }
 
@@ -161,7 +166,6 @@ void decode::fillIdentityMatrix()
 	}
 }
 
-
 void decode::fillGenMatrix()
 {
 	std::vector<int> vector;
@@ -174,7 +178,7 @@ void decode::fillGenMatrix()
 void decode::generateWords(int base)
 {
 	words.resize(numberOfWords);
-	int x, y;
+	int x;
 	for (int i = 0; i < numberOfWords; i++) {
 		for (int t = 0; t < genMatrix[0].size(); t++)  {
 			x = 0;
@@ -222,6 +226,70 @@ void decode::appendNumber(int pos, int number, int base)
 	}
 
 	return;
+}
+
+void decode::parityCheck(int h, int base)
+{
+	//INCOMPLETE
+	//Checks only for 1 bit error
+	//needs to calculate pattern error and check with syndrome???
+
+	//pick words length = G.w from codedMsg
+	//multiply by G
+	//	result = 0->good
+	//	dif -> bad
+	//		search result in G.columns   
+	//		change bit in word position G.column
+
+
+	std::vector<int> syndrome;
+	std::vector<int> parity;
+	int x, y, z ,j ;
+	bool valid = true;
+	for (int i = 0; i < codedMsg.size() - genMatrix[0].size();) {
+		for (int k = 0; k < h; k++) {
+			x = 0;
+			y = 0;
+			do{
+				j = i % genMatrix[0].size();
+				x+= (codedMsg[i] * genMatrix[k][j]) % base;
+				i++;
+			} while (i % genMatrix[0].size() != 0);
+
+			i -= genMatrix[0].size();
+			syndrome.push_back(x % base);
+		}
+		for (int t = 0; t < syndrome.size(); t++) {
+			if (syndrome[t]) {
+				valid = false;
+				goto searchParity;
+			}
+		}
+		searchParity:
+		if (!valid){
+			for (int s = 0; s < genMatrix[0].size(); s++) {
+				z = 0;
+				for (int r = 0; r < genMatrix.size(); r++) {
+					if (syndrome[r] == genMatrix[r][s]) {
+						z++;
+					}
+				}
+				if (z == genMatrix.size()) {
+					if (codedMsg[i + s]) {
+						codedMsg[i + s] = 0;
+					}
+					else {
+						codedMsg[i + s] = 1;
+					}
+				}
+			}
+			valid = true;
+		}
+		i += genMatrix[0].size();
+		syndrome.clear();
+	}
+
+
 }
 
 std::vector<int> decode::linealDeco(int h)
