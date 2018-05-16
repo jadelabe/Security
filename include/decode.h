@@ -41,7 +41,7 @@ private:
 	void generateWords(int base);
 	void generateBasicWords(int length, int base);
 	void appendNumber(int pos, int number, int base);
-	void parityCheck(int h, int base);
+	void parityCheck(int h, int w, int base);
 
 	std::vector<int> linealDeco(int h);
 	std::vector<std::vector<int>> sourceDeco();

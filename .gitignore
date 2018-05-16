@@ -167,3 +167,13 @@ include/.vs/VSWorkspaceState.json
 /.vs/Security/v15/ipch/AutoPCH/6797d7ecc5e3a70a
 /.vs/launch.vs.json
 /.vs/Security/v15/ipch/AutoPCH/86ec28db68b6c912/DECODE.ipch
+build_Unix/CMakeFiles/3.11.1/CMakeCCompiler.cmake
+build_Unix/CMakeFiles/3.11.1/CMakeCXXCompiler.cmake
+build_Unix/CMakeFiles/3.11.1/CMakeDetermineCompilerABI_C.bin
+build_Unix/CMakeFiles/3.11.1/CMakeDetermineCompilerABI_CXX.bin
+build_Unix/CMakeFiles/3.11.1/CMakeSystem.cmake
+build_Unix/CMakeFiles/3.11.1/CompilerIdC/CMakeCCompilerId.c
+build_Unix/CMakeFiles/3.11.1/CompilerIdC/a.out
+build_Unix/CMakeFiles/3.11.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
+build_Unix/CMakeFiles/3.11.1/CompilerIdCXX/a.out
+build_Unix/CMakeFiles/security.dir/include/decode.cpp.o

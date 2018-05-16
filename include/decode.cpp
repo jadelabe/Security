@@ -47,7 +47,7 @@ decode::decode(std::vector<int> numbers, int w, int h, int base, std::vector<int
 	generateWords(base);
 	hamming = calculateHamming();
 	
-	parityCheck(h, base);
+	parityCheck(h, w, base);
 
 	linealCodedMsg = linealDeco(h);
 	decoMsg = sourceDeco();
@@ -105,11 +105,12 @@ int decode::calculateCardinal(int base, int h)
 
 int decode::calculateHamming()
 {
-	/* Faster but not 100% precise
+	/* 
+	//Faster
+	//not 100% precise???
 	int distance = 99;
 	int foo = 0;
 	bool fooChanged = false;
-	//Need to create all the words and then count the number of one, take the lesser of those as hamming
 	for (int i = 0; i < genMatrix.size(); i++) {
 		for (int j = 0; j < genMatrix.size(); j++) {
 			for (int t = 0; t < genMatrix[i].size(); t++) {
@@ -228,35 +229,71 @@ void decode::appendNumber(int pos, int number, int base)
 	return;
 }
 
-void decode::parityCheck(int h, int base)
+void decode::parityCheck(int h, int w, int base)
 {
-	//INCOMPLETE
-	//Checks only for 1 bit error
-	//needs to calculate pattern error and check with syndrome???
+	//It should work, problem may be coming from the decoding phase
+	//only works for binary and up to 2bit errors
 
-	//pick words length = G.w from codedMsg
-	//multiply by G
+	//Generate control matrix H
+	//	matrix.w = matrix.h
+	//	generate new identity
+	//	append identiy
+	//Pick words length = G.w from codedMsg
+	//multiply by H
 	//	result = 0->good
 	//	dif -> bad
-	//		search result in G.columns   
-	//		change bit in word position G.column
+	//		search result in H.columns   
+	//		change bit in word position H.column
+	// 		check sum of 2 H.columns if not corrected
 
 
 	std::vector<int> syndrome;
-	std::vector<int> parity;
-	int x, y, z ,j ;
+	std::vector<int> vector;
+	std::vector<int> foo;
+	std::vector<std::vector<int>> controlH;
+	int x, y, z , j;
 	bool valid = true;
-	for (int i = 0; i < codedMsg.size() - genMatrix[0].size();) {
-		for (int k = 0; k < h; k++) {
+	//traspose matrix
+	for (int cw = 0; cw < w; cw++) {
+		for (int ch = 0; ch < h; ch++) {
+
+			vector.push_back(matrix[ch][cw]);
+		}
+		controlH.push_back(vector);
+		vector.clear();
+	}
+	//generate I for traspose
+	std::vector<std::vector<int>> TidentityMatrix;
+	for (int i = 0; i < controlH.size(); i++) {
+		for (int j = 0; j < controlH.size(); j++) {
+			if (i == j) {
+				vector.push_back(1);
+			}
+			else {
+				vector.push_back(0);
+			}
+		}
+		TidentityMatrix.push_back(vector);
+		vector.clear();
+	}
+	// merge T and new I ( control H | TidentityMatrix)
+	std::vector<std::vector<int>> control;
+	control = controlH;
+	for (int i = 0; i < controlH.size(); i++) {
+		control[i].insert(control[i].end(), TidentityMatrix[i].begin(), TidentityMatrix[i].end());
+	}
+
+	for (int i = 0; i < codedMsg.size() - control[0].size();) {
+		for (int k = 0; k < control.size(); k++) {
 			x = 0;
 			y = 0;
 			do{
-				j = i % genMatrix[0].size();
-				x+= (codedMsg[i] * genMatrix[k][j]) % base;
+				j = i % control[0].size();
+				x+= (codedMsg[i] * control[k][j]) % base;
 				i++;
-			} while (i % genMatrix[0].size() != 0);
+			} while (i % control[0].size() != 0);
 
-			i -= genMatrix[0].size();
+			i -= control[0].size();
 			syndrome.push_back(x % base);
 		}
 		for (int t = 0; t < syndrome.size(); t++) {
@@ -267,23 +304,48 @@ void decode::parityCheck(int h, int base)
 		}
 		searchParity:
 		if (!valid){
-			for (int s = 0; s < genMatrix[0].size(); s++) {
+			for (int s = 0; s < control[0].size(); s++) {
 				z = 0;
-				for (int r = 0; r < genMatrix.size(); r++) {
-					if (syndrome[r] == genMatrix[r][s]) {
+				for (int r = 0; r < control.size(); r++) {
+					if (syndrome[r] == control[r][s]) {
 						z++;
 					}
 				}
-				if (z == genMatrix.size()) {
+				if (z == control.size()) {
 					if (codedMsg[i + s]) {
 						codedMsg[i + s] = 0;
 					}
 					else {
 						codedMsg[i + s] = 1;
 					}
+					valid = true;
 				}
 			}
-			valid = true;
+			//quickfix for 2 bits, should build a better method
+			if(!valid){
+				for (int q = 0; q < control[0].size(); q++) {
+					for (int w = 0; w < control[0].size(); w++) {
+						for (int e = 0; e < control.size(); e++) {
+							foo.push_back((control[e][q] + control[e][w]) % base);
+						}
+						if (syndrome == foo){
+							if (codedMsg[i + q]) {
+								codedMsg[i + q] = 0;
+							}
+							else {
+								codedMsg[i + q] = 1;
+							}
+							if (codedMsg[i + w]) {
+								codedMsg[i + w] = 0;
+							}
+							else {
+								codedMsg[i + w] = 1;
+							}
+						}
+						foo.clear();
+					}
+				}
+			}
 		}
 		i += genMatrix[0].size();
 		syndrome.clear();
